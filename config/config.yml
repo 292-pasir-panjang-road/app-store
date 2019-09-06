@@ -1,12 +1,12 @@
 apps:
 - author: bill
+  deploy: true
   description: description placeholder
   framework: flask
   host: localhost
+  memory: 256
   name: test-app
   port: 8001
   sub_domain: test-app
-  deploy: true
-  memory: 256
 port: 8000
 store_version: 0.0.1
