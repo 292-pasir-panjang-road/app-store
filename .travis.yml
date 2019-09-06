@@ -3,12 +3,12 @@ python:
 - '3.7'
 before_script:
 - echo -e "Host $DEPLOY_HOST\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
-- export tag=${TRAVIS_COMMIT:0:7}
+- export TAG=${TRAVIS_COMMIT:0:7}
 - pip install -r requirements.txt
 - python validate.py
 script:
 - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
-- python build_apps.py $tag
+- python build_apps.py $TAG
 before_deploy:
 - openssl aes-256-cbc -K $encrypted_50cd93b296f8_key -iv $encrypted_50cd93b296f8_iv
   -in deploy/deploy_rsa.enc -out /tmp/deploy_rsa -d
@@ -18,7 +18,7 @@ before_deploy:
 deploy:
   provider: script
   skip_cleanup: true
-  script: python deploy.py $tag
+  script: python deploy.py $TAG
   on:
     branch: master
 before_install:
