@@ -1,9 +1,10 @@
-store_version: 0.0.1
-
-port: 8000
-
 apps:
-  - name: placeholder
-    author: placeholder
-    host: placeholder
-    sub_domain: placeholder
+- author: placeholder
+  sub_domain: placeholder
+  description: placeholder
+  framework: placeholder
+  host: placeholder
+  name: placeholder
+  port: placeholder
+port: 8000
+store_version: 0.0.1
