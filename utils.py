@@ -193,13 +193,12 @@ def build_apps(tag):
         continue
       commands.append(f"docker build -t {app['sub_domain']} ./sub_projects/{app['sub_domain']}/ && docker tag {app['sub_domain']} $DOCKER_USERNAME/{app['sub_domain']}:{tag} && docker push $DOCKER_USERNAME/{app['sub_domain']}:{tag}")
   commands_str = " ; ".join(commands)
-  print(commands_str)
   os.system(commands_str)
 
 def get_app_deploy_command(app_config_object, tag):
   sub_domain = app_config_object["sub_domain"]
   port = app_config_object["port"]
-  cmd = f"sudo docker stop 292ppr/{sub_domain}; sudo docker pull 292ppr/{sub_domain} && sudo docker run --name=292ppr/{sub_domain} -it --rm -p {port}:8000 292ppr/{sub_domain}:{tag}"
+  cmd = f"sudo docker stop 292ppr/{sub_domain}; sudo docker pull 292ppr/{sub_domain}:{tag} && sudo docker run --name=292ppr/{sub_domain} -it --rm -p {port}:8000 292ppr/{sub_domain}:{tag}"
   return cmd
 
 def deploy_apps(tag):
@@ -216,7 +215,6 @@ def deploy_apps(tag):
       commands.append(get_app_deploy_command(app, tag))
     docker_cmd = " ; ".join(commands)
     cmd = f"ssh 292ppr@$DEPLOY_HOST <<EOF {docker_cmd} EOF"
-    print(cmd)
     os.system(cmd)
 
 def validate():
