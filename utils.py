@@ -191,14 +191,14 @@ def build_apps(tag):
         continue
       if not app["deploy"]:
         continue
-      commands.append(f"docker build -t {app['sub_domain']} ./sub_projects/{app['sub_domain']}/ && docker tag {app['sub_domain']} $DOCKER_USERNAME/{app['sub_domain']}:{tag} && docker push $DOCKER_USERNAME/{app['sub_domain']}:{tag}")
+      commands.append(f"docker build -t {app['sub_domain']} ./sub_projects/{app['sub_domain']}/ && docker tag {app['sub_domain']} 292ppr/{app['sub_domain']}:{tag} && docker push 292ppr/{app['sub_domain']}:{tag}")
   commands_str = " ; ".join(commands)
   os.system(commands_str)
 
 def get_app_deploy_command(app_config_object, tag):
   sub_domain = app_config_object["sub_domain"]
   port = app_config_object["port"]
-  cmd = f"sudo docker stop $DOCKER_USERNAME/{sub_domain}; sudo docker pull $DOCKER_USERNAME/{sub_domain}:{tag} && sudo docker run --name=$DOCKER_USERNAME/{sub_domain} -it --rm -p {port}:8000 $DOCKER_USERNAME/{sub_domain}:{tag}"
+  cmd = f"sudo docker stop {sub_domain}; sudo docker pull 292ppr/{sub_domain}:{tag} && sudo docker run --name={sub_domain} -it --rm -p {port}:8000 292ppr/{sub_domain}:{tag}"
   return cmd
 
 def deploy_apps(tag):

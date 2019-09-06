@@ -7,7 +7,7 @@ before_script:
 - pip install -r requirements.txt
 - python validate.py
 script:
-- docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+- docker login -u="292ppr" -p="$DOCKER_PASSWORD"
 - echo "building and pushing apps"
 - python build_apps.py $TAG
 before_deploy:
