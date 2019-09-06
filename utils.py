@@ -198,7 +198,7 @@ def build_apps(tag):
 def get_app_deploy_command(app_config_object, tag):
   sub_domain = app_config_object["sub_domain"]
   port = app_config_object["port"]
-  cmd = f"sudo docker stop {sub_domain}; sudo docker pull 292ppr/{sub_domain}:{tag} && sudo docker run --name={sub_domain} -it --rm -p {port}:8000 292ppr/{sub_domain}:{tag}"
+  cmd = f"sudo docker stop {sub_domain}; sudo docker pull 292ppr/{sub_domain}:{tag} && sudo docker run --name={sub_domain} --rm -p {port}:8000 292ppr/{sub_domain}:{tag}"
   return cmd
 
 def deploy_apps(tag):
