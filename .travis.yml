@@ -1,0 +1,18 @@
+language: python
+
+python:
+- 3.7.x
+
+addons:
+  ssh_known_hosts: "$MAIN_DEPLOY_HOST"
+
+before_script:
+- tag=${TRAVIS_COMMIT:0:7}
+- pip install -r requirements.txt
+- python validate.py
+
+script:
+- docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+- python build_apps.py
+
+

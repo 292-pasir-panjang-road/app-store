@@ -3,7 +3,7 @@ import os
 import shutil
 
 DEFAULT_CONFIG_PATH = "config/config.yml"
-PLACEHOLDER_APP = { "name": "placeholder", "sub_domain": "placeholder", "host": "placeholder", "port": "placeholder", "author": "placeholder", "description": "placeholder", "framework": "placeholder" }
+PLACEHOLDER_APP = { "name": "placeholder", "sub_domain": "placeholder", "host": "placeholder", "port": "placeholder", "author": "placeholder", "description": "placeholder", "framework": "placeholder", "deploy": "placeholder", "memory": "placeholder" }
 AVAILABLE_FRAMEWORKS = ["flask"]
 
 #######################################
@@ -85,6 +85,14 @@ def validate_config(config_object):
     if app["framework"] not in AVAILABLE_FRAMEWORKS:
       raise InvalidConfigError(f"framework \"{app['framework']}\" not available now")
 
+    # check deploy
+    if "deploy" not in app:
+      raise InvalidConfigError("deploy status not specified")
+    
+    # check memory
+    if "memory" not in app:
+      raise InvalidConfigError("memory not specified")
+
 def validate_config_yaml(path=DEFAULT_CONFIG_PATH):
   if not os.path.exists(path):
     raise InvalidConfigError("cannot file config file")
@@ -129,7 +137,7 @@ def prepare_basic_structure(sub_domain, framework):
   for file_name in os.listdir(f"templates/{framework}"):
     shutil.copyfile(f"templates/{framework}/{file_name}", f"sub_projects/{sub_domain}/{file_name.replace('.template', '')}")
 
-def add_new_app(config_object, app_name, app_author, app_sub_domain, app_host, app_description, framework):
+def add_new_app(config_object, app_name, app_author, app_sub_domain, app_host, app_description, framework, deploy, memory):
   current_max_port = 8000
   for app in config_object["apps"]:
     if app["name"] == "placeholder":
@@ -137,18 +145,18 @@ def add_new_app(config_object, app_name, app_author, app_sub_domain, app_host, a
       break
     current_max_port = max(current_max_port, app["port"])
   
-  config_object["apps"].append({ "name": app_name, "author": app_author, "sub_domain": app_sub_domain, "host": app_host, "port": current_max_port + 1, "description": app_description, "framework": framework })
+  config_object["apps"].append({ "name": app_name, "author": app_author, "sub_domain": app_sub_domain, "host": app_host, "port": current_max_port + 1, "description": app_description, "framework": framework, "deploy": deploy, "memory": memory })
   validate_config(config_object)
   
   prepare_basic_structure(app_sub_domain, framework)
   validate_structure(config_object=config_object)
   return config_object
 
-def register_app(name, author, sub_domain, host="localhost", description="description placeholder", framework="flask"):
+def register_app(name, author, sub_domain, host="localhost", description="description placeholder", framework="flask", deploy=False, memory=256):
   try:
     with open("config/config.yml", "r") as config_file:
       config_object = yaml.safe_load(config_file)
-      result_config = add_new_app(config_object, name, author, sub_domain, host, description, framework)
+      result_config = add_new_app(config_object, name, author, sub_domain, host, description, framework, deploy, memory)
       with open("config/config.yml.tmp", "w") as temp_config:
         yaml.safe_dump(result_config, temp_config)
     
@@ -171,12 +179,30 @@ def remove_app(sub_domain):
     os.replace("config/config.yml.tmp", "config/config.yml")
     return "remove success"
 
+def build_apps():
+  with open("config/config.yml", "r") as config_file:
+    config_object = yaml.safe_load(config_file)
+    commands = []
+    for app in config_object["apps"]:
+      if app["name"] == "placeholder":
+        continue
+      # currently do not support other deploy method
+      if app["host"] != "localhost":
+        continue
+      if not app["deploy"]:
+        continue
+      commands.append(f"docker build -t {app['sub_domain']} ./sub_projects/{app['sub_domain']}/ && docker tag {app['sub_domain']} $DOCKER_USERNAME/{app['sub_domain']}:$tag && docker push $DOCKER_USERNAME/{app['sub_domain']}:$tag")
+  commands_str = " ; ".join(commands)
+  os.system(commands_str)
+
 def validate():
   try:
     validate_config_yaml()
     validate_structure()
+    exit(0)
   except Error as e:
     print(e.message)
+    exit(1)
 
 if __name__ == "__main__":
   validate()
