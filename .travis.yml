@@ -1,9 +1,8 @@
 language: python
 python:
 - '3.7'
-addons:
-  ssh_known_hosts: $MAIN_DEPLOY_HOST
 before_script:
+- echo -e "Host $MAIN_DEPLOY_HOST\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
 - export tag=${TRAVIS_COMMIT:0:7}
 - pip install -r requirements.txt
 - python validate.py
