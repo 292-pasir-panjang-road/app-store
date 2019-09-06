@@ -214,7 +214,7 @@ def deploy_apps(tag):
         continue
       commands.append(get_app_deploy_command(app, tag))
     docker_cmd = " ; ".join(commands)
-    cmd = f"ssh 292ppr@$DEPLOY_HOST <<EOF {docker_cmd} EOF"
+    cmd = f"ssh -p22 292ppr@$DEPLOY_HOST \"{docker_cmd}\""
     os.system(cmd)
 
 def validate():
