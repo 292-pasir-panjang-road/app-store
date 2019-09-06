@@ -193,6 +193,7 @@ def build_apps(tag):
         continue
       commands.append(f"docker build -t {app['sub_domain']} ./sub_projects/{app['sub_domain']}/ && docker tag {app['sub_domain']} $DOCKER_USERNAME/{app['sub_domain']}:{tag} && docker push $DOCKER_USERNAME/{app['sub_domain']}:{tag}")
   commands_str = " ; ".join(commands)
+  print(commands_str)
   os.system(commands_str)
 
 def get_app_deploy_command(app_config_object, tag):
@@ -215,6 +216,7 @@ def deploy_apps(tag):
       commands.append(get_app_deploy_command(app, tag))
     docker_cmd = " ; ".join(commands)
     cmd = f"ssh 292ppr@$DEPLOY_HOST <<EOF {docker_cmd} EOF"
+    print(cmd)
     os.system(cmd)
 
 def validate():
