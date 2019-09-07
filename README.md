@@ -54,3 +54,31 @@ sudo docker images
 sudo docker ps
 ```
 
+7. modify nginx to proxy the incoming request (might change later)
+
+For now, we use __nginx__ to route the traffic. To be more specific, for every in coming request from port _80_ we will identify the coming request prefix and route to different ports on server.
+For instance, `http://server.com/api/test` can be route to `localhost:8001` while `http://server.com/api/test2` can be route to `localhost:8002`. With this, we can deploy multiple docker images with some exposed ports to handle incoming requests. But to make this work, there's a final step; you need to modify `/etc/nginx/nginx.conf`
+
+```bash
+sudo vim /etc/nginx/nginx.conf
+```
+
+Add your config under section _http_ _server_ with the following format
+
+```conf
+{
+  server {
+    listen 80;
+
+    location /route/to/api {
+      proxy_pass http://127.0.0.1:8001;
+    }
+  }
+}
+```
+
+Then run
+
+```bash
+sudo /etc/init.d/nginx restart
+```
