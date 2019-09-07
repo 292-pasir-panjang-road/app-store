@@ -191,7 +191,7 @@ def build_apps(tag):
         continue
       if not app["deploy"]:
         continue
-      commands.append(f"docker build -t {app['sub_domain']} ./sub_projects/{app['sub_domain']}/ && docker tag {app['sub_domain']} 292ppr/{app['sub_domain']}:{tag} && docker push 292ppr/{app['sub_domain']}:{tag}")
+      commands.append(f"docker build -t {app['sub_domain']} -m {app['memory']} ./sub_projects/{app['sub_domain']}/ && docker tag {app['sub_domain']} 292ppr/{app['sub_domain']}:{tag} && docker push 292ppr/{app['sub_domain']}:{tag}")
   commands_str = " ; ".join(commands)
   os.system(commands_str)
 
