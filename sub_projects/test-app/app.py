@@ -1,4 +1,5 @@
 from flask import Flask
+from flask import make_response
 from flask_restful import Resource, Api
 
 app = Flask(__name__)
@@ -6,7 +7,7 @@ api = Api(app)
 
 class HelloWorld(Resource):
     def get(self):
-        return flask.make_response('<h1>丁樊🐂🍺</h1>', 200)
+        return make_response('<h1>丁樊🐂🍺</h1>', 200)
 
 api.add_resource(HelloWorld, "/")
 

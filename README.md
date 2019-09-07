@@ -1,4 +1,4 @@
-# 292 Pasir Panjang Road App Store
+# 292 Pasir Panjang Road App Store [![Build Status](https://travis-ci.org/292-pasir-panjang-road/app-store.svg?branch=master)](https://travis-ci.org/292-pasir-panjang-road/app-store)
 
 This is a big project. The main purpose for this project is for us to quickly develop and deploy interesting applications.
 
