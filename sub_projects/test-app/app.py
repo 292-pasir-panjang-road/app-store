@@ -6,7 +6,7 @@ api = Api(app)
 
 class HelloWorld(Resource):
     def get(self):
-        return "<h1>丁樊牛逼！</h1>"
+        return flask.make_response('<h1>丁樊🐂🍺</h1>', 200)
 
 api.add_resource(HelloWorld, "/")
 
