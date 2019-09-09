@@ -35,6 +35,7 @@ def job_function():
 
 # Send message to grp
 def send_msg(status_text):
+    pass
     # TODO: send to grp
 
 
