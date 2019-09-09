@@ -3,3 +3,4 @@ flask
 flask_restful
 requests
 apscheduler==2.1.2
+wxpy

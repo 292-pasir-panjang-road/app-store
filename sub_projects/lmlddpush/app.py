@@ -8,16 +8,43 @@ import time
 from datetime import datetime
 from apscheduler.scheduler import Scheduler
 
+from wxpy import Bot, ensure_one, embed
+
 app = Flask(__name__)
 
+# Weibo API
 APP_KEY = "2815647836"
 APP_SECRET = "52fcbb03a2ec45d54fd5c4b40a9582ba"
 ACCESS_TOKEN = "2.00UICb9GmcKYED184c921789UvEILB"
 WEIBO_API_TIME_FORMAT = "%a %b %d %H:%M:%S %z %Y"
-
 REQUEST_URL = "https://api.weibo.com/2/statuses/home_timeline.json"
 
+# Init wechat bot
+bot = Bot(console_qr=True)
+bot.messages.max_history = 1000
 
+# Ensure wechat group exists in list (Can only get by name)
+required_groups = ['testtest']
+# required_groups = ['我听见雨滴落在青青草地']
+while True:
+    done = True
+    for grp in required_groups:
+        if not bot.groups().search(grp):
+            done = False
+    
+    if not done:
+        print("Not yet finished loading")
+        time.sleep(5)
+    else:
+        break
+
+
+# Group
+group = ensure_one(bot.groups().search(required_groups[0]))
+embed()
+
+
+# Crontab
 cron = Scheduler(daemon=True)
 cron.start()
 
@@ -34,9 +61,8 @@ def job_function():
 
 
 # Send message to grp
-def send_msg(status_text):
-    pass
-    # TODO: send to grp
+def send_msg(text):
+    group.send(text)
 
 
 # Process a status json obj to formatted text
@@ -75,7 +101,7 @@ def get_timeline():
         
 
 
-
+# Shutdown crontab when web service stops
 atexit.register(lambda: cron.shutdown(wait=False))
 
 
