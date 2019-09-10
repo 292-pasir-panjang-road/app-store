@@ -3,3 +3,4 @@ Pipfile
 
 # Virtual Env
 env/
+.vscode
