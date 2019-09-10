@@ -91,7 +91,7 @@ def process_status(status):
     timestr = status['created_at']
     created_timestamp = datetime.strptime(timestr, WEIBO_API_TIME_FORMAT)
     formatted_timestr = datetime.strftime(created_timestamp, '%Y/%m/%d, %A, %H:%M:%S')
-    img_urls = [x['thumbnail_pic'] for x in status['pic_urls']]
+    img_urls = [x['thumbnail_pic'].replace('thumbnail', 'middle') for x in status['pic_urls']]
     return formatted_timestr + ':\n' + content, img_urls
 
 
