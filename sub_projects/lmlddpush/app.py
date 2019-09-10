@@ -1,10 +1,12 @@
 from flask import Flask
 from flask_restful import Resource, Api
 
+import os
 import requests
 import atexit
 import json
 import time
+import shutil
 from datetime import datetime
 from apscheduler.scheduler import Scheduler
 
@@ -25,7 +27,7 @@ bot.messages.max_history = 1000
 
 # Ensure wechat group exists in list (Can only get by name)
 # required_groups = ['testtest']
-required_groups = ['我听见雨滴落在青青草地']
+required_groups = ['姐(shǎ)夫(bī)观察小组']
 while True:
     done = True
     for grp in required_groups:
@@ -54,7 +56,6 @@ sched.start()
 def job_function():
     statuses_to_send = get_timeline()
     if not statuses_to_send:
-        print("No Status in past 10 minutes")
         return
     processed_statuses = [process_status(status) for status in statuses_to_send]
     for status_text, img_urls in processed_statuses:
@@ -71,7 +72,17 @@ def send_msg(text):
 
 # Send image to grp
 def send_img(url):
-    group.send_image(url)
+    img_path = "img_to_send.jpg"
+    download_img(url, img_path)
+    group.send_image(img_path)
+    os.remove(img_path)
+
+def download_img(url, path):
+    response = requests.get(url, stream=True)
+    if response.status_code == 200:
+        with open(path, 'wb') as f:
+            response.raw.decode_content = True
+            shutil.copyfileobj(response.raw, f)
 
 
 # Process a status json obj to formatted text and image urls
