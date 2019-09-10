@@ -24,8 +24,8 @@ bot = Bot(console_qr=True)
 bot.messages.max_history = 1000
 
 # Ensure wechat group exists in list (Can only get by name)
-required_groups = ['testtest']
-# required_groups = ['我听见雨滴落在青青草地']
+# required_groups = ['testtest']
+required_groups = ['我听见雨滴落在青青草地']
 while True:
     done = True
     for grp in required_groups:
@@ -33,48 +33,58 @@ while True:
             done = False
     
     if not done:
-        print("Not yet finished loading")
+        print("Not yet finished loading, try sending a message in the group.")
         time.sleep(5)
     else:
+        print("Finished loading.")
         break
 
 
 # Group
 group = ensure_one(bot.groups().search(required_groups[0]))
-embed()
 
 
 # Crontab
-cron = Scheduler(daemon=True)
-cron.start()
+sched = Scheduler()
+print("Starting cron job...")
+sched.start()
 
 
-# Run once per hour, get the statuses posted in past hour and send to grp
-@cron.interval_schedule(hours=1)
+# Runs once per 10 minutes, get the statuses posted in past 10 minutes and send to grp
 def job_function():
     statuses_to_send = get_timeline()
     if not statuses_to_send:
+        print("No Status in past 10 minutes")
         return
     processed_statuses = [process_status(status) for status in statuses_to_send]
-    for status_text in processed_statuses:
+    for status_text, img_urls in processed_statuses:
         send_msg(status_text)
+        _ = [send_img(x) for x in img_urls]
+
+
+sched.add_cron_job(job_function, minute='*/10')
 
 
 # Send message to grp
 def send_msg(text):
     group.send(text)
 
+# Send image to grp
+def send_img(url):
+    group.send_image(url)
 
-# Process a status json obj to formatted text
+
+# Process a status json obj to formatted text and image urls
 def process_status(status):
     content = status['text']
     timestr = status['created_at']
     created_timestamp = datetime.strptime(timestr, WEIBO_API_TIME_FORMAT)
     formatted_timestr = datetime.strftime(created_timestamp, '%Y/%m/%d, %A, %H:%M:%S')
-    return formatted_timestr + '\n' + content
+    img_urls = [x['thumbnail_pic'] for x in status['pic_urls']]
+    return formatted_timestr + ':\n' + content, img_urls
 
 
-# Get statuses in past hour
+# Get statuses in past 10 minutes
 def get_timeline():
     url = REQUEST_URL
     get_params = {"access_token": ACCESS_TOKEN}
@@ -92,7 +102,7 @@ def get_timeline():
         created_timestamp = datetime.strptime(timestr, WEIBO_API_TIME_FORMAT)
         created_secs = time.mktime(created_timestamp.timetuple())
         time_diff = time.time() - created_secs
-        if (time_diff <= 3600):
+        if (time_diff <= 600):
             statuses_new.append(status)
         else:
             break
@@ -102,8 +112,9 @@ def get_timeline():
 
 
 # Shutdown crontab when web service stops
-atexit.register(lambda: cron.shutdown(wait=False))
+atexit.register(lambda: sched.shutdown(wait=False))
 
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port="8000", use_reloader=False)
+    embed()
