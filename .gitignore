@@ -1,1 +1,5 @@
 Pipfile
+*.py[cod]
+
+# Virtual Env
+env/
