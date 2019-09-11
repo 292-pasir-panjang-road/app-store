@@ -9,7 +9,7 @@ apps:
   port: 8001
   sub_domain: test-app
 - author: PekTohNee
-  deploy: true
+  deploy: false
   description: description
   framework: flask
   host: localhost
