@@ -91,7 +91,7 @@ def download_img(url, path):
 def process_status(status):
     content = status['text']
     timestr = status['created_at']
-    user_link = WEIBOLINK + status['id']
+    user_link = WEIBOLINK + str(status['id'])
     created_timestamp = datetime.strptime(timestr, WEIBO_API_TIME_FORMAT)
     formatted_timestr = datetime.strftime(created_timestamp, '%Y/%m/%d, %A, %H:%M:%S')
     img_urls = [x['thumbnail_pic'].replace('thumbnail', 'middle') for x in status['pic_urls']]
