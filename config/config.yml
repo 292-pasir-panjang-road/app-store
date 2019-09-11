@@ -1,6 +1,6 @@
 apps:
 - author: bill
-  deploy: true
+  deploy: false
   description: description placeholder
   framework: flask
   host: localhost
@@ -8,14 +8,5 @@ apps:
   name: test-app
   port: 8001
   sub_domain: test-app
-- author: PekTohNee
-  deploy: true
-  description: description
-  framework: flask
-  host: localhost
-  memory: 128
-  name: lmlddpush
-  port: 8002
-  sub_domain: lmlddpush
 port: 8000
 store_version: 0.0.1
