@@ -20,6 +20,7 @@ APP_SECRET = "52fcbb03a2ec45d54fd5c4b40a9582ba"
 ACCESS_TOKEN = "2.00UICb9GmcKYED184c921789UvEILB"
 WEIBO_API_TIME_FORMAT = "%a %b %d %H:%M:%S %z %Y"
 REQUEST_URL = "https://api.weibo.com/2/statuses/home_timeline.json"
+WEIBOLINK = "weibo.com/u/"
 
 # Init wechat bot
 bot = Bot(console_qr=True)
@@ -89,10 +90,11 @@ def download_img(url, path):
 def process_status(status):
     content = status['text']
     timestr = status['created_at']
+    user_link = WEIBOLINK + status['id']
     created_timestamp = datetime.strptime(timestr, WEIBO_API_TIME_FORMAT)
     formatted_timestr = datetime.strftime(created_timestamp, '%Y/%m/%d, %A, %H:%M:%S')
     img_urls = [x['thumbnail_pic'].replace('thumbnail', 'middle') for x in status['pic_urls']]
-    return formatted_timestr + ':\n' + content, img_urls
+    return formatted_timestr + ':\n' + content + '\n' + user_link, img_urls
 
 
 # Get statuses in past 10 minutes
