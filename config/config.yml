@@ -1,6 +1,6 @@
 apps:
 - author: bill
-  deploy: true
+  deploy: false
   description: description placeholder
   framework: flask
   host: localhost
